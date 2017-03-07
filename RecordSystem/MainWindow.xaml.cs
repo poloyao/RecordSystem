@@ -23,6 +23,10 @@ namespace RecordSystem
 		public MainWindow()
 		{
 			InitializeComponent();
+			using (var db = new DB.NewsDBContext())
+			{
+				var item = db.Set<Models.User>().ToList();
+			}
 		}
 	}
 }
