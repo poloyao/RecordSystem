@@ -19,9 +19,9 @@ namespace RecordSystem.Models
 		public DateTime UDP { get; set; }
 
 		[Column(Order = 1)]
-		public virtual User User { get; set; }
+		public virtual User UserID { get; set; }
 
 		[Column(Order = 2)]
-		public string NewsTitle { get; set; }
+		public News NewsID { get; set; }
 	}
 }

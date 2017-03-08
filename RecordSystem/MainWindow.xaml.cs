@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RecordSystem.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,8 +26,32 @@ namespace RecordSystem
 			InitializeComponent();
 			using (var db = new DB.NewsDBContext())
 			{
-				var item = db.Set<Models.User>().ToList();
+				var item = db.Set<NewsLog>().ToList();
+				this.dataGrid.ItemsSource = item;
+
+				var userItems = db.Set<User>().ToList();
+				this.comboBox.ItemsSource = userItems;
+				this.comboBox.DisplayMemberPath = "Name";
+
 			}
+			this.button.Click += (s, e) =>
+			{
+				using (var db = new DB.NewsDBContext())
+				{
+					var userItems = db.Set<User>().ToList();
+					var user = userItems.SingleOrDefault(x => x.Id == ((User)this.comboBox.SelectedItem).Id);
+					if (user == null)
+						return;
+
+					db.Set<NewsLog>().Add(new NewsLog { UserID = user, NewsID = new News() { NewsTitle = this.textBox.Text }, UDP = DateTime.Now });
+					db.SaveChanges();
+					var item = db.Set<NewsLog>().ToList();
+					this.dataGrid.ItemsSource = item;
+				}
+			};
+
+
+
 		}
 	}
 }
