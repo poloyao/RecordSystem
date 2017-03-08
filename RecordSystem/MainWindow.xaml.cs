@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Collections.ObjectModel;
 
 namespace RecordSystem
 {
@@ -24,10 +25,23 @@ namespace RecordSystem
 		public MainWindow()
 		{
 			InitializeComponent();
+
 			using (var db = new DB.NewsDBContext())
 			{
-				var item = db.Set<NewsLog>().ToList();
-				this.dataGrid.ItemsSource = item;
+				var item = db.NewsLogs.Local;//db.NewsLogs;//db.Set<NewsLog>().ToList();
+				if (item.Count == 0)
+				{
+					db.Set<NewsLog>().ToList();
+				}
+				itemsSource = item;//new ObservableCollection<NewsLog>(item);
+				this.dataGrid.ItemsSource = itemsSource;
+
+				//var ness = db.Set<News>().ToList();
+				var newsLocal = db.News.Local;
+				if (newsLocal.Count() == 0)
+				{
+					db.Set<News>().ToList();
+				}
 
 				var userItems = db.Set<User>().ToList();
 				this.comboBox.ItemsSource = userItems;
@@ -43,15 +57,17 @@ namespace RecordSystem
 					if (user == null)
 						return;
 
-					db.Set<NewsLog>().Add(new NewsLog { UserID = user, NewsID = new News() { NewsTitle = this.textBox.Text }, UDP = DateTime.Now });
+					var result = db.Set<NewsLog>().Add(new NewsLog { UserID = user, NewsID = new News() { NewsTitle = this.textBox.Text }, UDP = DateTime.Now });
 					db.SaveChanges();
-					var item = db.Set<NewsLog>().ToList();
-					this.dataGrid.ItemsSource = item;
+					var itemNew = db.Set<NewsLog>().ToList();
+					var item = db.NewsLogs.Local;
+					//itemsSource.Add(result);
+					//this.dataGrid.ItemsSource = item;
 				}
 			};
-
-
-
 		}
+
+		public ObservableCollection<NewsLog> itemsSource { get; set; }
+
 	}
 }

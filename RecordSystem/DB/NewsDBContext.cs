@@ -1,6 +1,7 @@
 ﻿using RecordSystem.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.Entity;
 using System.Linq;
 using System.Text;
@@ -15,7 +16,20 @@ namespace RecordSystem.DB
 
 		public virtual DbSet<NewsLog> NewsLogs { get; set; }
 
+		public virtual DbSet<News> News { get; set; }
+
 		public NewsDBContext() : base("NewsLogDb")
+		{
+			Configuar();
+		}
+
+		public NewsDBContext(DbConnection connection, bool contextOwnsConnection)
+			: base(connection, contextOwnsConnection)
+		{
+			Configuar();
+		}
+
+		private void Configuar()
 		{
 			Configuration.ProxyCreationEnabled = true;
 			Configuration.LazyLoadingEnabled = true;
@@ -26,6 +40,10 @@ namespace RecordSystem.DB
 			modelBuilder.Entity<User>()
 				.Property(e => e.Name)
 				.IsUnicode(false);
+			modelBuilder.Entity<News>()
+				.Property(e => e.NewsTitle)
+				.IsUnicode(false);
+			modelBuilder.Entity<NewsLog>();
 
 
 			var initializer = new NewsDBInitializer(modelBuilder);

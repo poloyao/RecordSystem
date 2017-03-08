@@ -22,6 +22,6 @@ namespace RecordSystem.Models
 		public virtual User UserID { get; set; }
 
 		[Column(Order = 2)]
-		public News NewsID { get; set; }
+		public virtual News NewsID { get; set; }
 	}
 }
